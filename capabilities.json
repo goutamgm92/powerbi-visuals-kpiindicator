@@ -1,0 +1,300 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Values",
+            "name": "measure",
+            "kind": "Measure"
+        }
+    ],
+    "objects": {
+        "dataLabels": {
+            "displayName": "Data labels",
+            "properties": {
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "decimalPlaces": {
+                    "displayName": "Value decimal places",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "Arial Black, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri, sans-serif"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "Cambria Math, sans-serif"
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara, sans-serif"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Comic Sans MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": ""
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Constantia, sans-serif"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "Courier New, sans-serif"
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia, sans-serif"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "Lucida Sans Unicode, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "Segoe UI Bold, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "Segoe UI, wf_segoe-ui, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "Segoe UI Light, wf_segoe-ui_light, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol, sans-serif"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma, sans-serif"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "Times New Roman, sans-serif"
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "Trebuchet MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana, sans-serif"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings, sans-serif"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "categoryLabels": {
+            "displayName": "Category labels",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Arial",
+                                "value": "Arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial Black",
+                                "value": "Arial Black, sans-serif"
+                            },
+                            {
+                                "displayName": "Arial Unicode MS",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Calibri",
+                                "value": "Calibri, sans-serif"
+                            },
+                            {
+                                "displayName": "Cambria",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Cambria Math",
+                                "value": "Cambria Math, sans-serif"
+                            },
+                            {
+                                "displayName": "Candara",
+                                "value": "Candara, sans-serif"
+                            },
+                            {
+                                "displayName": "Comic Sans MS",
+                                "value": "Arial Unicode MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Consolas",
+                                "value": "Comic Sans MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Constantia",
+                                "value": ""
+                            },
+                            {
+                                "displayName": "Corbel",
+                                "value": "Constantia, sans-serif"
+                            },
+                            {
+                                "displayName": "Courier New",
+                                "value": "Courier New, sans-serif"
+                            },
+                            {
+                                "displayName": "Georgia",
+                                "value": "Georgia, sans-serif"
+                            },
+                            {
+                                "displayName": "Lucida Sans Unicode",
+                                "value": "Lucida Sans Unicode, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe (Bold)",
+                                "value": "Segoe UI Bold, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI",
+                                "value": "Segoe UI, wf_segoe-ui, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Segoe UI Light",
+                                "value": "Segoe UI Light, wf_segoe-ui_light, helvetica, arial, sans-serif"
+                            },
+                            {
+                                "displayName": "Symbol",
+                                "value": "Symbol, sans-serif"
+                            },
+                            {
+                                "displayName": "Tahoma",
+                                "value": "Tahoma, sans-serif"
+                            },
+                            {
+                                "displayName": "Times New Roman",
+                                "value": "Times New Roman, sans-serif"
+                            },
+                            {
+                                "displayName": "Trebuchet MS",
+                                "value": "Trebuchet MS, sans-serif"
+                            },
+                            {
+                                "displayName": "Verdana",
+                                "value": "Verdana, sans-serif"
+                            },
+                            {
+                                "displayName": "Wingdings",
+                                "value": "Wingdings, sans-serif"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "wordWrap": {
+            "displayName": "Word wrap",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "measure": {
+                        "max": 1
+                    }
+                }
+            ],
+            "single": {
+                "role": "measure"
+            }
+        }
+    ]
+}
