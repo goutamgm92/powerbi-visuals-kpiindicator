@@ -35,12 +35,13 @@ module powerbi.extensibility.visual {
 
     export class Visual implements IVisual {
         private settings: VisualSettings;
-        private root: d3.Selection<any>;
+        private root: HTMLElement;
 
         constructor(options: VisualConstructorOptions) {
-            this.root = d3.select(options.element)
-                .append("div")
-                .classed("root", true);
+            const visualRoot: HTMLElement = options.element;
+            this.root = document.createElement("div");
+            this.root.classList.add("root");
+            visualRoot.appendChild(this.root);
         }
 
         public update(options: VisualUpdateOptions) {
@@ -68,33 +69,28 @@ module powerbi.extensibility.visual {
             };
         }
 
-        private static render(container: d3.Selection<any>, data: DataModel, settings: VisualSettings) {
-            container.selectAll("*").remove();
-            const rootSelectoin: d3.selection.Update<DataModel> = container.data([data]);
-            rootSelectoin
-                .append("p")
-                .attr("id", "value")
-                .classed("value", true)
-                .style({
-                    "color": settings.dataLabels.color,
-                    "font-family": settings.dataLabels.fontFamily,
-                    "font-size": `${settings.dataLabels.fontSize}px`
+        private static render(container: HTMLElement, data: DataModel, settings: VisualSettings) {
+            container.innerHTML = "";
+            const valueElement: HTMLElement = document.createElement("p");
+            valueElement.id = "value";
+            valueElement.classList.add("value");
+            valueElement.style.color = settings.dataLabels.color;
+            valueElement.style.fontFamily = settings.dataLabels.fontFamily;
+            valueElement.style.fontSize = `${settings.dataLabels.fontSize}px`;
+            valueElement.textContent = data.value;
 
-                })
-                .text((d: DataModel) => d.value);
+            const labelElement: HTMLElement = document.createElement("p");
+            labelElement.classList.add("label");
+            labelElement.setAttribute("for", "value");
+            labelElement.style.position = settings.categoryLabels.show ? "block" : "none";
+            labelElement.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
+            labelElement.style.color = settings.categoryLabels.color;
+            labelElement.style.fontFamily = settings.categoryLabels.fontFamily;
+            labelElement.style.fontSize = `${settings.categoryLabels.fontSize}px`;
+            labelElement.textContent = data.displayName;
 
-            rootSelectoin
-                .append("label")
-                .attr("for", "value")
-                .classed("label", true)
-                .style({
-                    "color": settings.categoryLabels.color,
-                    "font-size": `${settings.categoryLabels.fontSize}px`,
-                    "font-family": settings.categoryLabels.fontFamily,
-                    "display": settings.categoryLabels.show ? "block" : "none",
-                    "white-space": settings.wordWrap.show ? "inherit" : "nowrap"
-                })
-                .text((d: DataModel) => d.displayName);
+            container.appendChild(valueElement);
+            container.appendChild(labelElement);
         }
 
         private static parseSettings(dataView: DataView): VisualSettings {
