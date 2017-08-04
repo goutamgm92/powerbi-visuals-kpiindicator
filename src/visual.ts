@@ -82,7 +82,7 @@ module powerbi.extensibility.visual {
             const labelElement: HTMLElement = document.createElement("p");
             labelElement.classList.add("label");
             labelElement.setAttribute("for", "value");
-            labelElement.style.position = settings.categoryLabels.show ? "block" : "none";
+            labelElement.style.display = settings.categoryLabels.show ? "block" : "none";
             labelElement.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
             labelElement.style.color = settings.categoryLabels.color;
             labelElement.style.fontFamily = settings.categoryLabels.fontFamily;
