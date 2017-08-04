@@ -30,9 +30,14 @@ h1, h2 {
 }
 
 .actual {
+    width: 100%;
     display: flex;
+    justify-content: space-around;
     align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
+
 .indicator {
     width: 0.75em;
     height: 0.75em;
@@ -44,10 +49,4 @@ h1, h2 {
     &>span {
         font-size: 0.5em;
     }
-}
-
-.value, .label {
-    max-width: 100%;
-    text-overflow: ellipsis;
-    overflow: hidden;
 }

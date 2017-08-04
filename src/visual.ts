@@ -26,12 +26,22 @@
 
 import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+
+enum Trend {
+    Neutral,
+    Negative,
+    Possitive
+}
 module powerbi.extensibility.visual {
     "use strict";
     interface DataModel {
         displayName: string;
-        actual: string;
-        target: string;
+        actual: number;
+        actualString: string;
+        target: number;
+        targetString: string;
+        percentage: number | string;
+        trend: Trend;
     }
 
     export class Visual implements IVisual {
@@ -54,7 +64,6 @@ module powerbi.extensibility.visual {
             }
             this.settings = Visual.parseSettings(options.dataViews[0]);
             const data: DataModel[] = Visual.converter(options.dataViews[0], this.settings);
-            debugger;
             Visual.render(this.root, data, this.settings);
         }
 
@@ -62,6 +71,7 @@ module powerbi.extensibility.visual {
             const data: DataModel[] = [];
             let targetIndex: number = 0;
             let actualIndex: number = 0;
+            const percentageFormatter: IValueFormatter = valueFormatter.create({ format: "0.00 %;-0.00 %;0.00 %" });
 
             dataView.table.columns.forEach((column: DataViewMetadataColumn, index: number) => {
                 let item: DataModel = {} as DataModel;
@@ -72,15 +82,30 @@ module powerbi.extensibility.visual {
                 });
                 if (column.roles["actual"]) {
                     item.displayName = column.displayName;
-                    item.actual = formatter.format(dataView.table.rows[0][column.index]);
+                    item.actual = dataView.table.rows[0][column.index] as number;
+                    item.actualString = formatter.format(item.actual);
                     data[actualIndex] = { ...(data[actualIndex] || {}), ...item };
                     actualIndex++;
                 }
                 if (column.roles["target"]) {
-                    item.target = formatter.format(dataView.table.rows[0][column.index]);
+                    item.target = dataView.table.rows[0][column.index] as number;
+                    item.targetString = formatter.format(item.target);
                     data[targetIndex] = { ...(data[targetIndex] || {}), ...item };
                     targetIndex++;
                 }
+            });
+            data.map((item: DataModel) => {
+                debugger;
+                const percentage: number = (item.target - item.actual) / item.actual;
+                if (percentage > 0) {
+                    item.trend = Trend.Possitive;
+                } else if (percentage < 0) {
+                    item.trend = Trend.Negative;
+                } else {
+                    item.trend = Trend.Neutral;
+                }
+
+                item.percentage = percentageFormatter.format(percentage);
             });
             return data;
         }
@@ -97,9 +122,13 @@ module powerbi.extensibility.visual {
         private static createTile(data: DataModel, settings: VisualSettings): HTMLElement {
             const element: HTMLElement = document.createElement("div");
             element.classList.add("tile");
-            element.appendChild(this.createTitleElement(data, settings));
-            element.appendChild(this.createActualValueElement(data, settings));
-            element.appendChild(this.createTargetValueElement(data, settings));
+            if (data.actual !== undefined) {
+                element.appendChild(this.createTitleElement(data, settings));
+                element.appendChild(this.createActualValueElement(data, settings));
+                if (data.target !== undefined) {
+                    element.appendChild(this.createTargetValueElement(data, settings));
+                }
+            }
             return element;
         }
 
@@ -122,14 +151,20 @@ module powerbi.extensibility.visual {
             const valueElement: HTMLElement = document.createElement("h2");
             valueElement.style.color = settings.dataLabels.color;
             valueElement.style.fontFamily = settings.dataLabels.fontFamily;
-            valueElement.textContent = data.actual;
+            valueElement.textContent = data.actualString;
 
             const indicatorElement: HTMLElement = document.createElement("div");
             indicatorElement.classList.add("indicator");
             indicatorElement.style.color = settings.indicator.textColor;
-            indicatorElement.style.backgroundColor = settings.indicator.negativeColor;
+            indicatorElement.style.backgroundColor =
+                data.trend === Trend.Negative
+                    ? settings.indicator.negativeColor
+                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor : null;
             const span: HTMLElement = document.createElement("span");
-            span.textContent = "!";
+            span.textContent =
+                data.trend === Trend.Negative
+                    ? settings.indicator.negativeText
+                    : data.trend === Trend.Possitive ? settings.indicator.positiveText : null;
             indicatorElement.appendChild(span);
 
             element.appendChild(valueElement);
@@ -138,7 +173,16 @@ module powerbi.extensibility.visual {
         }
 
         private static createTargetValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
-            return document.createElement("div");
+            const element: HTMLElement = document.createElement("span");
+            const procentageElement: HTMLElement = document.createElement("span");
+            procentageElement.style.color =
+                data.trend === Trend.Negative
+                    ? settings.indicator.negativeColor
+                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor : null;
+            procentageElement.textContent = `(${data.percentage})`;
+            element.textContent = `Budget: ${data.targetString}`;
+            element.appendChild(procentageElement);
+            return element;
         }
 
         private static parseSettings(dataView: DataView): VisualSettings {
