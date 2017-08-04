@@ -3,11 +3,49 @@
     width: 100%;
     height: 100%;
     display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+h1, h2 {
+    padding: 0;
+    margin: 0;
+}
+
+.tile {
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    margin: 1em 0;
+    padding: 0 1.5em;
     overflow: hidden;
+    &:nth-child(n+2) {
+        border-left: 1px solid #ABB2B9;
+    }
 }
+
+.title {
+    margin: 0;
+    padding: 0 0 1em 0;
+}
+
+.actual {
+    display: flex;
+    align-items: center;
+}
+.indicator {
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 50%;
+    margin-left: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &>span {
+        font-size: 0.5em;
+    }
+}
+
 .value, .label {
     max-width: 100%;
     text-overflow: ellipsis;

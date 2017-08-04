@@ -29,8 +29,9 @@ import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
 module powerbi.extensibility.visual {
     "use strict";
     interface DataModel {
-        value: string;
         displayName: string;
+        actual: string;
+        target: string;
     }
 
     export class Visual implements IVisual {
@@ -52,45 +53,92 @@ module powerbi.extensibility.visual {
                 return;
             }
             this.settings = Visual.parseSettings(options.dataViews[0]);
-            const data = Visual.converter(options.dataViews[0], this.settings);
+            const data: DataModel[] = Visual.converter(options.dataViews[0], this.settings);
+            debugger;
             Visual.render(this.root, data, this.settings);
         }
 
-        private static converter(dataView: DataView, settings: VisualSettings): DataModel {
-            const metadata: DataViewMetadataColumn = dataView.metadata.columns[0];
-            const formatter: IValueFormatter = valueFormatter.create({
-                precision: settings.dataLabels.decimalPlaces,
-                value: settings.dataLabels.labelDisplayUnits ? settings.dataLabels.labelDisplayUnits : dataView.single.value,
-                columnType: metadata ? metadata.type : undefined
+        private static converter(dataView: DataView, settings: VisualSettings): DataModel[] {
+            const data: DataModel[] = [];
+            let targetIndex: number = 0;
+            let actualIndex: number = 0;
+
+            dataView.table.columns.forEach((column: DataViewMetadataColumn, index: number) => {
+                let item: DataModel = {} as DataModel;
+                const formatter: IValueFormatter = valueFormatter.create({
+                    precision: settings.dataLabels.decimalPlaces,
+                    value: settings.dataLabels.labelDisplayUnits,
+                    columnType: column ? column.type : undefined
+                });
+                if (column.roles["actual"]) {
+                    item.displayName = column.displayName;
+                    item.actual = formatter.format(dataView.table.rows[0][column.index]);
+                    data[actualIndex] = { ...(data[actualIndex] || {}), ...item };
+                    actualIndex++;
+                }
+                if (column.roles["target"]) {
+                    item.target = formatter.format(dataView.table.rows[0][column.index]);
+                    data[targetIndex] = { ...(data[targetIndex] || {}), ...item };
+                    targetIndex++;
+                }
             });
-            return {
-                displayName: metadata.displayName,
-                value: formatter.format(dataView.single.value)
-            };
+            return data;
         }
 
-        private static render(container: HTMLElement, data: DataModel, settings: VisualSettings) {
+        private static render(container: HTMLElement, data: DataModel[], settings: VisualSettings) {
             container.innerHTML = "";
-            const valueElement: HTMLElement = document.createElement("p");
-            valueElement.id = "value";
-            valueElement.classList.add("value");
+            const fragment: DocumentFragment = document.createDocumentFragment();
+            for (let i = 0; i < data.length; i++) {
+                fragment.appendChild(Visual.createTile(data[i], settings));
+            }
+            container.appendChild(fragment);
+        }
+
+        private static createTile(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("div");
+            element.classList.add("tile");
+            element.appendChild(this.createTitleElement(data, settings));
+            element.appendChild(this.createActualValueElement(data, settings));
+            element.appendChild(this.createTargetValueElement(data, settings));
+            return element;
+        }
+
+        private static createTitleElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("h1");
+            element.classList.add("title");
+            element.style.display = settings.categoryLabels.show ? "block" : "none";
+            element.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
+            element.style.color = settings.categoryLabels.color;
+            element.style.fontFamily = settings.categoryLabels.fontFamily;
+            element.style.fontSize = `${settings.categoryLabels.fontSize}px`;
+            element.textContent = data.displayName;
+            return element;
+        }
+
+        private static createActualValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("div");
+            element.classList.add("actual");
+            element.style.fontSize = `${settings.dataLabels.fontSize}px`;
+            const valueElement: HTMLElement = document.createElement("h2");
             valueElement.style.color = settings.dataLabels.color;
             valueElement.style.fontFamily = settings.dataLabels.fontFamily;
-            valueElement.style.fontSize = `${settings.dataLabels.fontSize}px`;
-            valueElement.textContent = data.value;
+            valueElement.textContent = data.actual;
 
-            const labelElement: HTMLElement = document.createElement("p");
-            labelElement.classList.add("label");
-            labelElement.setAttribute("for", "value");
-            labelElement.style.display = settings.categoryLabels.show ? "block" : "none";
-            labelElement.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
-            labelElement.style.color = settings.categoryLabels.color;
-            labelElement.style.fontFamily = settings.categoryLabels.fontFamily;
-            labelElement.style.fontSize = `${settings.categoryLabels.fontSize}px`;
-            labelElement.textContent = data.displayName;
+            const indicatorElement: HTMLElement = document.createElement("div");
+            indicatorElement.classList.add("indicator");
+            indicatorElement.style.color = settings.indicator.textColor;
+            indicatorElement.style.backgroundColor = settings.indicator.negativeColor;
+            const span: HTMLElement = document.createElement("span");
+            span.textContent = "!";
+            indicatorElement.appendChild(span);
 
-            container.appendChild(valueElement);
-            container.appendChild(labelElement);
+            element.appendChild(valueElement);
+            element.appendChild(indicatorElement);
+            return element;
+        }
+
+        private static createTargetValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            return document.createElement("div");
         }
 
         private static parseSettings(dataView: DataView): VisualSettings {

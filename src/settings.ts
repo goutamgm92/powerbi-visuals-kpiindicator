@@ -32,6 +32,7 @@ module powerbi.extensibility.visual {
     public categoryLabels: CategorySettings = new CategorySettings();
     public dataLabels: DataLabelSettings = new DataLabelSettings();
     public wordWrap: WordWrapSettings = new WordWrapSettings();
+    public indicator: IndicatorSettings = new IndicatorSettings();
   }
 
   export class CategorySettings {
@@ -50,6 +51,14 @@ module powerbi.extensibility.visual {
   }
   class WordWrapSettings {
     public show: boolean = true;
+  }
+
+  class IndicatorSettings {
+    public textColor: string = "#FFFFFF";
+    public positiveColor: string = "#28B463";
+    public negativeColor: string = "#E74C3C";
+    public negativeText: string = "✔";
+    public positiveText: string = "!";
   }
 
 }

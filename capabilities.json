@@ -1,9 +1,24 @@
 {
     "dataRoles": [
         {
-            "displayName": "Values",
-            "name": "measure",
-            "kind": "Measure"
+            "displayName": "Actual value",
+            "name": "actual",
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+        },
+        {
+            "displayName": "Target value",
+            "name": "target",
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         }
     ],
     "objects": {
@@ -281,19 +296,72 @@
                     }
                 }
             }
+        },
+        "indicator": {
+            "displayName": "Indicator Settings",
+            "properties": {
+                "textColor": {
+                    "displayName": "Text color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "positiveColor": {
+                    "displayName": "Positive color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "positiveText": {
+                    "displayName": "Positive text",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "negativeColor": {
+                    "displayName": "Negative color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "negativeText": {
+                    "displayName": "Negative text",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
         }
     },
     "dataViewMappings": [
         {
-            "conditions": [
-                {
-                    "measure": {
-                        "max": 1
-                    }
+            "table": {
+                "rows": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "target"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "actual"
+                            }
+                        }
+                    ]
                 }
-            ],
-            "single": {
-                "role": "measure"
             }
         }
     ]
