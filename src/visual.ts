@@ -26,21 +26,33 @@
 
 import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
 import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+
+enum Trend {
+    Neutral,
+    Negative,
+    Possitive
+}
 module powerbi.extensibility.visual {
     "use strict";
     interface DataModel {
-        value: string;
         displayName: string;
+        actual: number;
+        actualString: string;
+        target: number;
+        targetString: string;
+        percentage: number | string;
+        trend: Trend;
     }
 
     export class Visual implements IVisual {
         private settings: VisualSettings;
-        private root: d3.Selection<any>;
+        private root: HTMLElement;
 
         constructor(options: VisualConstructorOptions) {
-            this.root = d3.select(options.element)
-                .append("div")
-                .classed("root", true);
+            const visualRoot: HTMLElement = options.element;
+            this.root = document.createElement("div");
+            this.root.classList.add("root");
+            visualRoot.appendChild(this.root);
         }
 
         public update(options: VisualUpdateOptions) {
@@ -51,50 +63,123 @@ module powerbi.extensibility.visual {
                 return;
             }
             this.settings = Visual.parseSettings(options.dataViews[0]);
-            const data = Visual.converter(options.dataViews[0], this.settings);
+            const data: DataModel[] = Visual.converter(options.dataViews[0], this.settings);
             Visual.render(this.root, data, this.settings);
         }
 
-        private static converter(dataView: DataView, settings: VisualSettings): DataModel {
-            const metadata: DataViewMetadataColumn = dataView.metadata.columns[0];
-            const formatter: IValueFormatter = valueFormatter.create({
-                precision: settings.dataLabels.decimalPlaces,
-                value: settings.dataLabels.labelDisplayUnits ? settings.dataLabels.labelDisplayUnits : dataView.single.value,
-                columnType: metadata ? metadata.type : undefined
+        private static converter(dataView: DataView, settings: VisualSettings): DataModel[] {
+            const data: DataModel[] = [];
+            let targetIndex: number = 0;
+            let actualIndex: number = 0;
+            const percentageFormatter: IValueFormatter = valueFormatter.create({ format: "0.00 %;-0.00 %;0.00 %" });
+
+            dataView.table.columns.forEach((column: DataViewMetadataColumn, index: number) => {
+                let item: DataModel = {} as DataModel;
+                const formatter: IValueFormatter = valueFormatter.create({
+                    precision: settings.dataLabels.decimalPlaces,
+                    value: settings.dataLabels.labelDisplayUnits,
+                    columnType: column ? column.type : undefined
+                });
+                if (column.roles["actual"]) {
+                    item.displayName = column.displayName;
+                    item.actual = dataView.table.rows[0][column.index] as number;
+                    item.actualString = formatter.format(item.actual);
+                    data[actualIndex] = { ...(data[actualIndex] || {}), ...item };
+                    actualIndex++;
+                }
+                if (column.roles["target"]) {
+                    item.target = dataView.table.rows[0][column.index] as number;
+                    item.targetString = formatter.format(item.target);
+                    data[targetIndex] = { ...(data[targetIndex] || {}), ...item };
+                    targetIndex++;
+                }
             });
-            return {
-                displayName: metadata.displayName,
-                value: formatter.format(dataView.single.value)
-            };
+            data.map((item: DataModel) => {
+                const percentage: number = (item.actual - item.target) / item.target;
+                if (percentage > 0) {
+                    item.trend = Trend.Possitive;
+                } else if (percentage < 0) {
+                    item.trend = Trend.Negative;
+                } else {
+                    item.trend = Trend.Neutral;
+                }
+                item.percentage = percentageFormatter.format(percentage);
+            });
+            return data;
         }
 
-        private static render(container: d3.Selection<any>, data: DataModel, settings: VisualSettings) {
-            container.selectAll("*").remove();
-            const rootSelectoin: d3.selection.Update<DataModel> = container.data([data]);
-            rootSelectoin
-                .append("p")
-                .attr("id", "value")
-                .classed("value", true)
-                .style({
-                    "color": settings.dataLabels.color,
-                    "font-family": settings.dataLabels.fontFamily,
-                    "font-size": `${settings.dataLabels.fontSize}px`
+        private static render(container: HTMLElement, data: DataModel[], settings: VisualSettings) {
+            container.innerHTML = "";
+            const fragment: DocumentFragment = document.createDocumentFragment();
+            for (let i = 0; i < data.length; i++) {
+                fragment.appendChild(Visual.createTile(data[i], settings));
+            }
+            container.appendChild(fragment);
+        }
 
-                })
-                .text((d: DataModel) => d.value);
+        private static createTile(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("div");
+            element.classList.add("tile");
+            if (data.actual !== undefined) {
+                element.appendChild(this.createTitleElement(data, settings));
+                element.appendChild(this.createActualValueElement(data, settings));
+                if (data.target !== undefined) {
+                    element.appendChild(this.createTargetValueElement(data, settings));
+                }
+            }
+            return element;
+        }
 
-            rootSelectoin
-                .append("label")
-                .attr("for", "value")
-                .classed("label", true)
-                .style({
-                    "color": settings.categoryLabels.color,
-                    "font-size": `${settings.categoryLabels.fontSize}px`,
-                    "font-family": settings.categoryLabels.fontFamily,
-                    "display": settings.categoryLabels.show ? "block" : "none",
-                    "white-space": settings.wordWrap.show ? "inherit" : "nowrap"
-                })
-                .text((d: DataModel) => d.displayName);
+        private static createTitleElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("h1");
+            element.classList.add("title");
+            element.style.display = settings.categoryLabels.show ? "block" : "none";
+            element.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
+            element.style.color = settings.categoryLabels.color;
+            element.style.fontFamily = settings.categoryLabels.fontFamily;
+            element.style.fontSize = `${settings.categoryLabels.fontSize}px`;
+            element.textContent = data.displayName;
+            return element;
+        }
+
+        private static createActualValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("div");
+            element.classList.add("actual");
+            element.style.fontSize = `${settings.dataLabels.fontSize}px`;
+            const valueElement: HTMLElement = document.createElement("h2");
+            valueElement.style.color = settings.dataLabels.color;
+            valueElement.style.fontFamily = settings.dataLabels.fontFamily;
+            valueElement.textContent = data.actualString;
+
+            const indicatorElement: HTMLElement = document.createElement("div");
+            indicatorElement.classList.add("indicator");
+            indicatorElement.style.color = settings.indicator.textColor;
+            const span: HTMLElement = document.createElement("span");
+            if (data.trend === Trend.Possitive) {
+                indicatorElement.style.backgroundColor = settings.indicator.positiveColor;
+                span.textContent = settings.indicator.positiveText;
+            } else if (data.trend === Trend.Negative) {
+                indicatorElement.style.backgroundColor = settings.indicator.negativeColor;
+                span.textContent = settings.indicator.negativeText;
+            }
+            indicatorElement.appendChild(span);
+
+            element.appendChild(valueElement);
+            element.appendChild(indicatorElement);
+            return element;
+        }
+
+        private static createTargetValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
+            const element: HTMLElement = document.createElement("span");
+            const procentageElement: HTMLElement = document.createElement("span");
+            procentageElement.style.color =
+                data.trend === Trend.Negative
+                    ? settings.indicator.negativeColor
+                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor : null;
+            procentageElement.textContent = `(${data.percentage})`;
+            element.textContent = `Budget: ${data.targetString}`;
+            element.appendChild(procentageElement);
+            return element;
         }
 
         private static parseSettings(dataView: DataView): VisualSettings {
