@@ -56,9 +56,9 @@ module powerbi.extensibility.visual {
   class IndicatorSettings {
     public textColor: string = "#FFFFFF";
     public positiveColor: string = "#28B463";
+    public positiveText: string = "✔";
     public negativeColor: string = "#E74C3C";
-    public negativeText: string = "✔";
-    public positiveText: string = "!";
+    public negativeText: string = "!";
   }
 
 }

@@ -95,8 +95,7 @@ module powerbi.extensibility.visual {
                 }
             });
             data.map((item: DataModel) => {
-                debugger;
-                const percentage: number = (item.target - item.actual) / item.actual;
+                const percentage: number = (item.actual - item.target) / item.target;
                 if (percentage > 0) {
                     item.trend = Trend.Possitive;
                 } else if (percentage < 0) {
@@ -104,7 +103,6 @@ module powerbi.extensibility.visual {
                 } else {
                     item.trend = Trend.Neutral;
                 }
-
                 item.percentage = percentageFormatter.format(percentage);
             });
             return data;
@@ -156,15 +154,14 @@ module powerbi.extensibility.visual {
             const indicatorElement: HTMLElement = document.createElement("div");
             indicatorElement.classList.add("indicator");
             indicatorElement.style.color = settings.indicator.textColor;
-            indicatorElement.style.backgroundColor =
-                data.trend === Trend.Negative
-                    ? settings.indicator.negativeColor
-                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor : null;
             const span: HTMLElement = document.createElement("span");
-            span.textContent =
-                data.trend === Trend.Negative
-                    ? settings.indicator.negativeText
-                    : data.trend === Trend.Possitive ? settings.indicator.positiveText : null;
+            if (data.trend === Trend.Possitive) {
+                indicatorElement.style.backgroundColor = settings.indicator.positiveColor;
+                span.textContent = settings.indicator.positiveText;
+            } else if (data.trend === Trend.Negative) {
+                indicatorElement.style.backgroundColor = settings.indicator.negativeColor;
+                span.textContent = settings.indicator.negativeText;
+            }
             indicatorElement.appendChild(span);
 
             element.appendChild(valueElement);
