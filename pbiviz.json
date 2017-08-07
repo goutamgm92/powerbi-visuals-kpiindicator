@@ -5,14 +5,14 @@
     "guid": "Kpiindicator133C1FAC512B4BBFB656628CE198787B",
     "visualClassName": "Visual",
     "version": "1.0.0",
-    "description": "",
-    "supportUrl": "",
-    "gitHubUrl": ""
+    "description": "KPI Indicator by Microsoft is KPI Card visual's fork. It's used to visualize key performance indicators. The status is presented as a color indication, comparing the actual and target values.",
+    "supportUrl": "http://community.powerbi.com",
+    "gitHubUrl": "https://github.com/Microsoft/powerbi-visuals-kpiindicator"
   },
   "apiVersion": "1.7.0",
   "author": {
     "name": "Microsoft",
-    "email": ""
+    "email": "pbicvsupport@microsoft.com"
   },
   "assets": {
     "icon": "assets/icon.png"

@@ -1,5 +1,15 @@
 {
-  "name": "visual",
+  "name": "powerbi-visuals-kpiindicator",
+  "author": {
+    "name": "Microsoft",
+    "email": "pbicvsupport@microsoft.com"
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/powerbi-visuals-kpiindicator.git"
+  },
   "scripts": {
     "start": "pbiviz start",
     "package": "pbiviz package"
