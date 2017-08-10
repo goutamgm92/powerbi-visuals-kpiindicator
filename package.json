@@ -1,5 +1,5 @@
 {
-  "name": "powerbi-visuals-kpiindicator",
+  "name": "powerbi-Visuals-ThreeStateKpiIndicator",
   "author": {
     "name": "Microsoft",
     "email": "pbicvsupport@microsoft.com"
@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Microsoft/powerbi-visuals-kpiindicator.git"
+    "url": "git+https://github.com/goutamgm92/threeStateKPI.git"
   },
   "scripts": {
     "start": "pbiviz start",

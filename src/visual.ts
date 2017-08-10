@@ -96,9 +96,9 @@ module powerbi.extensibility.visual {
             });
             data.map((item: DataModel) => {
                 const percentage: number = (item.actual - item.target) / item.target;
-                if (percentage > 0) {
+                if (percentage > settings.indicator.positivePercentageVal) {
                     item.trend = Trend.Possitive;
-                } else if (percentage < 0) {
+                } else if (percentage < settings.indicator.negativePercentageVal) {
                     item.trend = Trend.Negative;
                 } else {
                     item.trend = Trend.Neutral;
@@ -114,7 +114,7 @@ module powerbi.extensibility.visual {
             for (let i = 0; i < data.length; i++) {
                 fragment.appendChild(Visual.createTile(data[i], settings));
             }
-            container.appendChild(fragment);
+            container.appendChild(fragment)
         }
 
         private static createTile(data: DataModel, settings: VisualSettings): HTMLElement {
@@ -133,7 +133,7 @@ module powerbi.extensibility.visual {
         private static createTitleElement(data: DataModel, settings: VisualSettings): HTMLElement {
             const element: HTMLElement = document.createElement("h1");
             element.classList.add("title");
-            element.style.display = settings.categoryLabels.show ? "block" : "none";
+            element.style.display = settings.categoryLabels.show ? "inherit" : "none";
             element.style.whiteSpace = settings.wordWrap.show ? "inherit" : "nowrap";
             element.style.color = settings.categoryLabels.color;
             element.style.fontFamily = settings.categoryLabels.fontFamily;
@@ -149,8 +149,13 @@ module powerbi.extensibility.visual {
             const valueElement: HTMLElement = document.createElement("h2");
             valueElement.style.color = settings.dataLabels.color;
             valueElement.style.fontFamily = settings.dataLabels.fontFamily;
-            valueElement.textContent = data.actualString;
+            valueElement.style.fontWeight = 'normal';
 
+            if (settings.indicator.dataDisplayRole === "$")
+                valueElement.textContent = `${settings.indicator.dataDisplayRole}${data.actualString}`;
+            else
+                valueElement.textContent = `${data.actualString}${settings.indicator.dataDisplayRole }`;
+             
             const indicatorElement: HTMLElement = document.createElement("div");
             indicatorElement.classList.add("indicator");
             indicatorElement.style.color = settings.indicator.textColor;
@@ -158,10 +163,19 @@ module powerbi.extensibility.visual {
             if (data.trend === Trend.Possitive) {
                 indicatorElement.style.backgroundColor = settings.indicator.positiveColor;
                 span.textContent = settings.indicator.positiveText;
+                span.style.marginTop = "-.12em";
             } else if (data.trend === Trend.Negative) {
                 indicatorElement.style.backgroundColor = settings.indicator.negativeColor;
                 span.textContent = settings.indicator.negativeText;
+                span.style.marginTop = "-.22em";
+            } else if (data.trend === Trend.Neutral)
+            {
+                indicatorElement.style.backgroundColor = settings.indicator.neutralColor;
+                span.textContent = settings.indicator.neutralText;
+                span.style.marginTop = "-.28em";
             }
+            
+            indicatorElement.style.marginLeft = settings.indicator.leftMargin;
             indicatorElement.appendChild(span);
 
             element.appendChild(valueElement);
@@ -172,13 +186,36 @@ module powerbi.extensibility.visual {
         private static createTargetValueElement(data: DataModel, settings: VisualSettings): HTMLElement {
             const element: HTMLElement = document.createElement("span");
             const procentageElement: HTMLElement = document.createElement("span");
+            /*
+            if (data.trend === Trend.Possitive) {
+                procentageElement.style.color = settings.indicator.positiveColor;
+            }
+            else if (data.trend === Trend.Negative)
+            {
+                procentageElement.style.color = settings.indicator.negativeColor;
+            }
+            
+            else
+            //if (data.trend === Trend.Neutral)
+            {
+                procentageElement.style.color = settings.indicator.neutralColor;
+            }
+            */
             procentageElement.style.color =
                 data.trend === Trend.Negative
                     ? settings.indicator.negativeColor
-                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor : null;
+
+                    : data.trend === Trend.Possitive ? settings.indicator.positiveColor 
+                    : data.trend === Trend.Neutral ? settings.indicator.neutralColor : null;
+            
             procentageElement.textContent = `(${data.percentage})`;
-            element.textContent = `Budget: ${data.targetString}`;
+            if (settings.indicator.dataDisplayRole === "$")
+                element.textContent = `Budget: ${settings.indicator.dataDisplayRole}${data.targetString}  `;
+            else
+                element.textContent = `Budget: ${data.targetString}${settings.indicator.dataDisplayRole} `;
             element.appendChild(procentageElement);
+            element.style.fontSize = '12';
+            element.style.color = "#334356";
             return element;
         }
 

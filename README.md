@@ -1,1 +1,1 @@
-# KPI Indicator by Microsoft for Power BI
+# 3 state KPI Indicator by Microsoft for Power BI

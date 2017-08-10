@@ -55,10 +55,15 @@ module powerbi.extensibility.visual {
 
   class IndicatorSettings {
     public textColor: string = "#FFFFFF";
-    public positiveColor: string = "#28B463";
+    public positiveColor: string = "#3FAD91";
     public positiveText: string = "✔";
-    public negativeColor: string = "#E74C3C";
+    public negativeColor: string = "#C85842";
     public negativeText: string = "!";
+    public neutralColor: string = "#E2C052";
+    public neutralText: string = "–";
+    public positivePercentageVal: number = 2.5;
+    public negativePercentageVal: number = 2.5;
+    public leftMargin: string = "-0.8em";
+    public dataDisplayRole: string = "$";
   }
-
 }

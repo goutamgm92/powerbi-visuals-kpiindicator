@@ -299,50 +299,90 @@
         },
         "indicator": {
             "displayName": "Indicator Settings",
-            "properties": {
-                "textColor": {
-                    "displayName": "Text color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "positiveColor": {
-                    "displayName": "Positive color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "positiveText": {
-                    "displayName": "Positive text",
-                    "type": {
-                        "text": true
-                    }
-                },
-                "negativeColor": {
-                    "displayName": "Negative color",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
-                "negativeText": {
-                    "displayName": "Negative text",
-                    "type": {
-                        "text": true
-                    }
+          "properties": {
+            "textColor": {
+              "displayName": "Text color",
+              "type": {
+                "fill": {
+                  "solid": {
+                    "color": true
+                  }
                 }
+              }
+            },
+            "positiveColor": {
+              "displayName": "Positive color",
+              "type": {
+                "fill": {
+                  "solid": {
+                    "color": true
+                  }
+                }
+              }
+            },
+            "positiveText": {
+              "displayName": "Positive text",
+              "type": {
+                "text": true
+              }
+            },
+            "negativeColor": {
+              "displayName": "Negative color",
+              "type": {
+                "fill": {
+                  "solid": {
+                    "color": true
+                  }
+                }
+              }
+            },
+            "negativeText": {
+              "displayName": "Negative text",
+              "type": {
+                "text": true
+              }
+            },
+            "neutralColor": {
+              "displayName": "Neutral color",
+              "type": {
+                "fill": {
+                  "solid": {
+                    "color": true
+                  }
+                }
+              }
+            },
+            "neutralText": {
+              "displayName": "Neutral text",
+              "type": {
+                "text": true
+              }
+            },
+            "positivePercentageVal": {
+              "displayName": "Positive Percentage",
+              "type": {
+                "text": true
+              }
+            },
+            "negativePercentageVal": {
+              "displayName": "Negative Percentage",
+              "type": {
+                "text": true
+              }
+            },
+            "leftMargin": {
+              "displayName": "Left margin",
+              "type": {
+                "text": true
+              }
+            },
+            "dataDisplayRole": {
+              "displayName": "Data Display Role",
+              "type": {
+                "text": true
+              }
             }
+          }
         }
     },
     "dataViewMappings": [
